@@ -34,8 +34,8 @@ unique_subjects= set()
 unique_students= set()
 
 for names, subjects, grade in grades:
-    unique_subjects.add(subjects)
-    unique_students.add(names)
-
+    unique_subjects.add(subjects)  #duplicate are ignore automatically
+    unique_students.add(names)     # add only if not in set
+    
 print(f"unique students : {unique_students}")
 print(f"unique_subjects : {unique_subjects}")
