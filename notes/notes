@@ -18,10 +18,17 @@ to upload first commit in github
 - navigate to the folder first
 - git init
 - git add .
+- git add READ.md
 - git commit -m "first commit"
 - git remote add origin https://github.com/your-username/your-repo.git
 - git branch -M main
 - git push -u origin main
+
+to pull and push back (pull , do edit(if needed) and push)
+- git pull origin main
+- git add . 
+- git commit -m "comment'
+- git push
 
 git log --oneline      # see commit history
 git diff               # see exact changes before staging
