@@ -7,3 +7,22 @@ to bypass venv
 
 to set ip address anywhere
 0.0.0.0/0
+
+to update github
+- git add . # OR
+- git add filename.js  # add a specific file
+- git commit -m "comment"
+- git push origin main
+
+to upload first commit in github
+- navigate to the folder first
+- git init
+- git add .
+- git commit -m "first commit"
+- git remote add origin https://github.com/your-username/your-repo.git
+- git branch -M main
+- git push -u origin main
+
+git log --oneline      # see commit history
+git diff               # see exact changes before staging
+git status             # see what's changed/staged
