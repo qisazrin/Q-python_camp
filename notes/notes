@@ -1,0 +1,9 @@
+to set environment in vscode
+to bypass venv
+# Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+# python -m venv myvenv
+# myvenv\scripts\activate
+
+to set ip address anywhere
+0.0.0.0/0
