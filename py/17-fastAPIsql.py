@@ -139,6 +139,7 @@ async def get_user_posts(user_id: int):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail=f"An error occurred: {str(e)}")
 
+# POST - Create post
 @app.post("/posts/", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def create_post(post: PostCreate):
     """Create a new post."""

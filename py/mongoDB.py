@@ -45,20 +45,23 @@ class DatabaseManager:
         try:
             if ObjectId.is_valid(user_id):
                 user_object_id = ObjectId(user_id)
+            else:
+                raise ValueError(f"Invalid user_id: {user_id}")
             post = {
                 "user_id": user_object_id,
                 "title": title,
                 "content": content,
                 "created_at": datetime.now()
             }
+            
             result = self.posts_collection.insert_one(post)
             return str(result.inserted_id)
         except Exception as e:
             print(f"Error creating post: {e}")
             return None
         
-    def get_user(self, user_id):
-        """Get all users."""   # FIX 1: docstring updated to reflect actual behaviour
+    def get_all_users(self):
+        """Get all users."""   
         try:
             users = list(self.users_collection.find())
             for user in users:
@@ -68,7 +71,7 @@ class DatabaseManager:
             print(f"Error getting user: {e}")
             return None
     
-    def get_posts_by_user(self, user_id):
+    def get_posts_by_user_id(self, user_id):
         """Get posts by user."""
         try:
             if ObjectId.is_valid(user_id):
@@ -97,9 +100,7 @@ class DatabaseManager:
             else:
                 user_object_id = user_id
 
-            # FIX 2: delete user's posts first (was using wrong collection & filter)
             self.posts_collection.delete_many({"user_id": user_object_id})
-            # FIX 3: then delete the user (was using wrong collection)
             result = self.users_collection.delete_one({"_id": user_object_id})
             return result.deleted_count > 0
         
@@ -146,7 +147,6 @@ def main():
             except ValueError:
                 print("Invalid age. Please enter a valid number.")
         
-        # FIX 4: choice 2 and 3 were swapped — now match the display_menu() order
         elif choice == "2":
             print("\n--- Create new post ---")
             user_id = input("Enter user ID: ").strip()
@@ -160,7 +160,7 @@ def main():
 
         elif choice == "3":
             print("\n--- All Users ---")
-            users = db.get_user(None)   # FIX 5: was calling undefined db.get_all_users()
+            users = db.get_all_users()
             if users:
                 for user in users:
                     print(f"ID: {user['_id']}, Name: {user['name']}, Email: {user['email']}, Age: {user['age']}")
@@ -170,7 +170,7 @@ def main():
         elif choice == "4":
             print("\n--- View User Posts ---")
             user_id = input("Enter user ID: ").strip()
-            posts = db.get_posts_by_user(user_id)
+            posts = db.get_posts_by_user_id(user_id)
             if posts:
                 for post in posts:
                     print(f"ID: {post['_id']}")
@@ -184,12 +184,21 @@ def main():
         elif choice == "5":
             print("\n--- Delete User ---")
             user_id = input("Enter user ID to delete: ").strip()
-            confirm = input("Are you sure you want to delete this user and all their posts? (yes/no): ").strip().lower()
-            if confirm == "yes":
-                if db.delete_user(user_id):
-                    print("User and their posts deleted successfully.")
+            
+            # check if user exists first
+            users = db.get_all_users()
+            user_exists = any(user['_id'] == user_id for user in users)
+            if not user_exists:
+                print("User not found. Please check the ID and try again.")
+            else:
+                confirm = input("Are you sure you want to delete this user and all their posts? (yes/no): ").strip().lower()
+                if confirm == "yes":
+                    if db.delete_user(user_id):
+                        print("User and their posts deleted successfully.")
+                    else:
+                        print("Failed to delete user.")
                 else:
-                    print("Failed to delete user. Make sure the user ID is correct.")
+                    print("Deletion cancelled.")
         
         elif choice == "6":
             print("\nClosing database connection....")
