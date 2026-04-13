@@ -123,13 +123,13 @@ No prior programming experience is needed. Just make sure you have these install
 
 ## ⚙️ Setup & Installation
 
-**1. Clone this repository**
+**1. Create repository**
 ```bash
-git clone https://github.com/qisazrin/Q-python_camp.git
-cd Q-python_camp
+https://github.com/your github name/repo name.git
+cd repo name
 ```
 
-**2. Create and activate a virtual environment**
+**2. Create and activate a virtual environment in VScode terminal**
 ```bash
 # Windows
 python -m venv venv
@@ -167,7 +167,7 @@ python 01-Variables.py
 ```bash
 python 18-FastMongo.py
 # or
-uvicorn 18-FastMongo:app --host 127.0.0.1 --port 8000 --reload
+uvicorn 18-FastMongo:app --host 000.0.0.1 --port 8000 --reload
 ```
 
 ### Launch the Streamlit app
@@ -234,17 +234,6 @@ Q-python_camp/
 ├── requirements.txt
 └── README.md
 ```
-
----
-
-## 🤝 Contributing
-
-This repo is open for everyone to learn from. If you spot a bug, a typo, or want to suggest improvements:
-
-1. Fork this repository
-2. Create a new branch (`git checkout -b fix/your-fix`)
-3. Commit your changes (`git commit -m "fix: describe your fix"`)
-4. Push and open a Pull Request
 
 ---
 
