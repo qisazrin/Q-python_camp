@@ -95,16 +95,18 @@ input, textarea, select {
 # ───────────── API HELPERS ─────────────
 def api_get(path, params=None):
     try:
-        r = requests.get(f"{API_URL}{path}", params=params)
+        r = requests.get(f"{API_URL}{path}", params=params, timeout=15)
         return r.json() if r.status_code == 200 else None
+    except requests.exceptions.Timeout:
+        st.error("Request timed out. The server may be waking up — please try again.")
+        return None
     except Exception:
         st.error("API connection failed")
         return None
 
-
 def api_post(path, json=None, files=None, data=None):
     try:
-        r = requests.post(f"{API_URL}{path}", json=json, files=files, data=data)
+        r = requests.post(f"{API_URL}{path}", json=json, files=files, data=data, timeout=15)
         if r.status_code not in (200, 201):
             try:
                 detail = r.json().get("detail", r.text)
@@ -120,7 +122,7 @@ def api_post(path, json=None, files=None, data=None):
 
 def api_put(path, json):
     try:
-        r = requests.put(f"{API_URL}{path}", json=json)
+        r = requests.put(f"{API_URL}{path}", json=json, timeout=15)
         return r.json()
     except Exception:
         st.error("PUT request failed")
@@ -129,7 +131,7 @@ def api_put(path, json):
 
 def api_delete(path):
     try:
-        r = requests.delete(f"{API_URL}{path}")
+        r = requests.delete(f"{API_URL}{path}", timeout=15)
         return r.json()
     except Exception:
         st.error("DELETE request failed")
@@ -152,8 +154,8 @@ for key, default in {
 def auth_page():
     st.markdown("""
     <style>
-    .auth-title { font-size: 2.4rem; font-weight: 800; color: #white; margin-bottom: 0; }
-    .auth-sub   { font-size: 1rem; color: #white; margin-bottom: 1.5rem; }
+    .auth-title { font-size: 2.4rem; font-weight: 800; color: white; margin-bottom: 0; }
+    .auth-sub   { font-size: 1rem; color: white; margin-bottom: 1.5rem; }
     .stTabs [data-baseweb="tab"] p { color: #ffffff !important; }
     .role-badge-admin { background:#e63946; color:#fff; padding:2px 10px; border-radius:20px; font-size:.8rem; font-weight:700; }
     .role-badge-user  { background:#457b9d; color:#fff; padding:2px 10px; border-radius:20px; font-size:.8rem; font-weight:700; }
@@ -174,21 +176,21 @@ def auth_page():
                 password = st.text_input("Password", type="password")
                 submitted = st.form_submit_button("Login", use_container_width=True)
 
-            if submitted:
-                if not username or not password:
-                    st.error("Please fill in all fields.")
-                else:
-                    res = api_post("/auth/login", json={"username": username, "password": password})
-                    if res:
-                        st.session_state.logged_in = True
-                        st.session_state.username = res["username"]
-                        st.session_state.role = res["role"]
+                if submitted:
+                    if not username or not password:
+                        st.error("Please fill in all fields.")
+                    else:
+                        res = api_post("/auth/login", json={"username": username, "password": password})
+                        if res:
+                            st.session_state.logged_in = True
+                            st.session_state.username = res["username"]
+                            st.session_state.role = res["role"]
                         # Set default page based on role
-                        if res["role"] == "admin":
-                            st.session_state.page = "📊 Dashboard"
-                        else:
-                            st.session_state.page = "📊 My Analytics"
-                        st.rerun()
+                            if res["role"] == "admin":
+                                st.session_state.page = "📊 Dashboard"
+                            else:
+                                st.session_state.page = "📊 My Analytics"
+                            st.rerun()
 
         # ── REGISTER ──
         with tab_register:
@@ -197,27 +199,31 @@ def auth_page():
                 new_password = st.text_input("Choose a Password (min 6 chars)", type="password")
                 confirm_password = st.text_input("Confirm Password", type="password")
                 role_choice = st.selectbox("Account Type", ["User", "Admin"])
-                admin_secret = ""
-                if role_choice == "Admin":
-                    admin_secret = st.text_input("Admin Secret Key", type="password",
-                                                 help="Contact the system administrator for the secret key.")
+    
+                # ✅ Always render — disable when not Admin
+                admin_secret = st.text_input(
+                    "Admin Secret Key",
+                    type="password",
+                    help="Contact the system administrator for the secret key.",
+                    disabled=(role_choice != "Admin"),  # grayed out for regular users
+                    placeholder="Required for Admin accounts only")
                 reg_submitted = st.form_submit_button("Create Account", use_container_width=True)
 
-            if reg_submitted:
-                if not new_username or not new_password or not confirm_password:
-                    st.error("Please fill in all fields.")
-                elif new_password != confirm_password:
-                    st.error("Passwords do not match.")
-                else:
-                    payload = {
+                if reg_submitted:
+                    if not new_username or not new_password or not confirm_password:
+                        st.error("Please fill in all fields.")
+                    elif new_password != confirm_password:
+                        st.error("Passwords do not match.")
+                    else:
+                        payload = {
                         "username": new_username,
                         "password": new_password,
                         "role": role_choice.lower(),
                         "admin_secret": admin_secret if role_choice == "Admin" else None
                     }
-                    res = api_post("/auth/register", json=payload)
-                    if res:
-                        st.success(f"Account created! You can now log in as **{res['role']}**.")
+                        res = api_post("/auth/register", json=payload)
+                        if res:
+                            st.success(f"Account created! You can now log in as **{res['role']}**.")
 
 
 # ───────────── REPORT ID DROPDOWN HELPER ─────────────
@@ -646,8 +652,9 @@ def user_update():
                 if result:
                     st.success("Updated successfully!")
                 else:
-                    st.error("Failed to update.")
-                    st.warning("Could not load report.")
+                    st.error("Failed to update report.") 
+            else:
+                st.warning("Could not load report.")
 
 
 def user_delete():
