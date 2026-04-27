@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+motor
+pymongo
+pydantic[email]
+python-multipart
+streamlit
+requests
+pandas
