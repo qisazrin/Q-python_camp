@@ -1,3 +1,4 @@
 .env
 venv
 __pycache__
+scam_report_my/uploads/
