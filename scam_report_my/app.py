@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 
 # ───────────── CONFIG ─────────────
-API_URL = "http://127.0.0.1:8000"
+API_URL = "https://scam-watch-sy14.onrender.com"
 
 SCAM_TYPES = [
     "Phone Scam", "Email Phishing", "Online Shopping Fraud",
