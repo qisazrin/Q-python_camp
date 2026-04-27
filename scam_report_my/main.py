@@ -13,7 +13,7 @@ import hashlib
 # ───────────── LOAD ENV ─────────────
 load_dotenv()
 
-client = MongoClient(os.getenv("mongo_URL"))
+client = MongoClient(os.getenv("MONGO_URL"))
 db = client[os.getenv("DB_NAME")]
 reports_collection = db["reports"]
 users_collection = db["users"]
