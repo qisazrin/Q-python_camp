@@ -1,2 +1,0 @@
-# notes for python bootcamp
- 
