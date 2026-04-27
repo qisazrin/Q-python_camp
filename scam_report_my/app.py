@@ -6,14 +6,6 @@ import pandas as pd
 # ───────────── CONFIG ─────────────
 API_URL = os.getenv("API_URL", "https://main-scamwatch.onrender.com")
 
-try:
-    response = requests.get(f"{API_URL}/reports")  # replace '/scams' with your actual endpoint
-    response.raise_for_status()  # raise error if request failed
-    data = response.json()
-    st.write(data)
-except Exception as e:
-    st.error(f"Failed to fetch data: {e}")
-
 SCAM_TYPES = [
     "Phone Scam", "Email Phishing", "Online Shopping Fraud",
     "Investment Scam", "Romance Scam", "Job Scam",
