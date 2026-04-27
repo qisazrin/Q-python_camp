@@ -13,12 +13,19 @@ import hashlib
 # ───────────── LOAD ENV ─────────────
 load_dotenv()
 
+from fastapi.responses import RedirectResponse
+
+app = FastAPI(title="ScamWatch API", version="4.0")
+
+@app.get("/")
+async def root():
+    # Redirect visitors of the backend root to the Streamlit frontend
+    return RedirectResponse(url="https://scam-watch-sy14.onrender.com")
+
 client = MongoClient(os.getenv("MONGO_URL"))
 db = client[os.getenv("DB_NAME")]
 reports_collection = db["reports"]
 users_collection = db["users"]
-
-app = FastAPI(title="ScamWatch API", version="4.0")
 
 # ───────────── STATIC FILES ─────────────
 os.makedirs("uploads", exist_ok=True)

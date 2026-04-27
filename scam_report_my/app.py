@@ -6,7 +6,6 @@ import pandas as pd
 # ───────────── CONFIG ─────────────
 API_URL = os.getenv("API_URL", "https://main-scamwatch.onrender.com")
 
-# call FastAPI reports endpoint
 try:
     response = requests.get(f"{API_URL}/reports")  # replace '/scams' with your actual endpoint
     response.raise_for_status()  # raise error if request failed
@@ -229,8 +228,8 @@ def auth_page():
                         "username": new_username,
                         "password": new_password,
                         "role": role_choice.lower(),
-                        "admin_secret": admin_secret if role_choice == "Admin" else None
-                    }
+                        "admin_secret": admin_secret if role_choice == "Admin" else None}
+
                         res = api_post("/auth/register", json=payload)
                         if res:
                             st.success(f"Account created! You can now log in as **{res['role']}**.")
