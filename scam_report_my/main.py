@@ -83,13 +83,6 @@ def get_next_report_id():
         if candidate not in existing_ids:
             return candidate
 
-
-# ───────────── ROOT ─────────────
-@app.get("/")
-async def root():
-    return {"message": "ScamWatch API v4.0 running"}
-
-
 # ───────────── AUTH: REGISTER ─────────────
 @app.post("/auth/register")
 async def register(data: UserRegister):
