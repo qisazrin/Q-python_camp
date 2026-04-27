@@ -13,6 +13,11 @@ SCAM_TYPES = [
 
 STATUS_LIST = ["pending", "verified", "rejected"]
 
+st.set_page_config(
+    page_title="ScamWatch",
+    page_icon="🛡️",
+    layout="wide"
+)
 # ───────────── GLOBAL BACKGROUND & THEME ─────────────
 st.markdown("""<style>
 /* ── Animated gradient background ── */
